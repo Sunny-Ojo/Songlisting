@@ -87,6 +87,7 @@ class SongsController extends Controller
         $song->music_label = $request->music_label;
         $song->event = $request->event;
         $song->uploaded_by = auth()->user()->name;
+        $song->user_id = auth()->user()->id;
 
         $song->save();
         return redirect('/')->with('success', 'Song was uploaded successfully');
@@ -101,7 +102,7 @@ class SongsController extends Controller
     public function show($id)
     {
         //
-        $otherSongs = DB::select('select * from songs ', ['limit 4']);
+        $otherSongs = Song::orderBy('created_at', 'desc')->take(3)->get();
 
         $songs = Song::find($id);
         return view('songs.show')->with(['songs' => $songs, 'otherSongs' => $otherSongs]);
@@ -116,7 +117,12 @@ class SongsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $song = Song::find($id);
+
+        if (auth()->user()->id != $song->user_id) {
+            return redirect()->back()->with('error', 'Access denied');
+        }
+        return view('songs\edit')->with('song', $song);
     }
 
     /**
@@ -128,7 +134,65 @@ class SongsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required|string|max:40',
+            'genre' => 'required',
+            'about' => 'required|min:20',
+            'about_author' => 'required|min:20|string',
+            'author' => 'required|string',
+            'song' => '',
+            'cover_image' => '|image',
+            'year_released' => 'required|',
+            'music_label' => 'required|',
+            'event' => 'required|',
+        ]);
+        if ($request->hasFile('cover_image')) {
+            $img = $request->file('cover_image');
+            $imgFullname = $img->getClientOriginalName();
+            $imgExt = $img->getClientOriginalExtension();
+            $imgnameonly = pathinfo($imgFullname, PATHINFO_FILENAME);
+            $imgToDb = $imgnameonly . '_' . time() . '.' . $imgExt;
+            $path = $img->storeAs('public/cover_images', $imgToDb);
+        }
+
+        if ($request->hasFile('song')) {
+            $uploadedSong = $request->file('song');
+            $songExt = $uploadedSong->getClientOriginalExtension();
+            if ($songExt != 'mp3') {
+                return redirect()->back()->with('error', 'Format of the song is not allowed');
+
+            }
+
+            $songName = $uploadedSong->getClientOriginalName();
+            $songNameOnly = pathinfo($songName, PATHINFO_FILENAME);
+            $songToDb = $songNameOnly . '_' . time() . '.' . $songExt;
+            $path = $uploadedSong->storeAs('public/songs', $songToDb);
+
+        }
+
+        $song = Song::find($id);
+        $song->name = $request->title;
+        if ($request->hasFile('song')) {
+            $song->cover_image = $songToDb;
+
+        }
+
+        $song->genre = $request->genre;
+        $song->author = $request->author;
+        $song->about = $request->about;
+        $song->about_artist = $request->about_author;
+        if ($request->hasFile('cover_image')) {
+            $song->cover_image = $imgToDb;
+
+        }
+        $song->year_released = $request->year_released;
+        $song->music_label = $request->music_label;
+        $song->event = $request->event;
+        $song->uploaded_by = auth()->user()->name;
+        $song->user_id = auth()->user()->id;
+        $song->save();
+        return redirect('/songs')->with('success', 'Song update was successful');
+
     }
 
     /**

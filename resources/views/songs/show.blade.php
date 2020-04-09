@@ -27,7 +27,7 @@
 					</div>
 					<div class="col-lg-4">
 						<div class="songs-links">
-							<a href="/download"><img src="{{asset('img/icons/p-2.png')}}" alt="" title="download"></a>
+							<a href="/download/{{ $songs->id }}"><img src="{{asset('img/icons/p-2.png')}}" alt="" title="download"></a>
 						</div>
 					</div>
 				</div>
@@ -54,7 +54,12 @@
 
                         </ul>
 					<p><strong>About this Song:</strong><span> {{$songs->about}}.</span></p>
-               </div>
+                        @auth
+                            @if(auth()->user()->id == $songs->user_id)
+                        <a href="/songs/{{$songs->id}}/edit" class="btn btn-secondary">Edit this song's details</a>
+                        @endif
+                        @endauth
+                </div>
 				</div>
 				<div class="col-lg-6 col-md-6">
 					<div class="row">

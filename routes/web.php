@@ -1,5 +1,7 @@
 <?php
 
+use App\Song;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,14 +16,17 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/', function () {
-    $otherSongs = DB::select('select * from songs ', ['limit 3']);
+    $otherSongs = Song::orderBy('created_at', 'desc')->take(3)->get();
     return view('index')->with('song', $otherSongs);
 });
 Route::get('/logout', function () {
     auth()->logout();
     return redirect()->back();
 });
-
+Route::get('/download/{id}', function ($id) {
+    $id = Song::find($id);
+    return response()->download(public_path('/storage/songs/' . $id->song), $id->name . '.mp3', );
+});
 Auth::routes();
 Route::resource('songs', 'SongsController');
 Route::get('/home', function () {

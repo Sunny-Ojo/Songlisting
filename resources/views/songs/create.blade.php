@@ -8,12 +8,7 @@
 <div class=" row mt-5">
 
     <div class="col-md-8 col-lg-8 offset-md-2">
-    @if (count($errors)> 0)
-    @foreach ($errors->all() as $item)
-    <li class="text-danger">{{$item}}</li>
-    @endforeach
 
-    @endif
         <h4 class="text-center bg-dark text-white-50 p-2">Upload your songs</h4>
         {!! Form::open(['action' => 'SongsController@store', 'method' => 'POST', 'files' =>'true'] )!!}
           <div class="form-group">

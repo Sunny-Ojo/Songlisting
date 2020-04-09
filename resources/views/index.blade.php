@@ -61,6 +61,7 @@
 			<li><a href="/">Home</a></li>
         <li><a href="{{route('about')}}">About</a></li>
             <li><a href="{{ route('contact') }}">Contact</a></li>
+			<li><a href="{{ route('songs.index') }}">All Songs</a></li>
 			<li><a href="{{ route('songs.create') }}">Upload Songs</a></li>
 		</ul>
     </header>
@@ -73,15 +74,15 @@
 			<div class="hs-item">
 				<div class="container p-2">
 					<div class="row">
-						<div class="col-lg-6">
-							<div class="hs-text">
-                                @include('layouts.msg')
+                            <div class="col-lg-6 mt-3">
+							 @include('layouts.msg')
 
 								<h2><span>Music</span> for everyone.</h2>
 								<p>Play, Stream, Download And Upload Songs... </p>
 								<a href="/songs/create" class="btn btn-primary">Upload Songs</a>
 								<a href="/songs" class="btn btn-warning">All Songs</a>
-							</div>
+							{{-- <div class="hs-text">
+                               </div> --}}
 						</div>
 						<div class="col-lg-6">
 							<div class="hr-img">
@@ -94,15 +95,13 @@
 			<div class="hs-item">
 				<div class="container">
 					<div class="row">
-						<div class="col-lg-6">
-							<div class="hs-text">
-                                @include('layouts.msg')
+                        <div class="col-lg-6 mt-3">
+					  @include('layouts.msg')
 
 								<h2><span>Listen </span> to new Songs.</h2>
 								<p >Play, Stream, Download And Upload Songs... </p>
                                 <a href="/songs/create" class="btn btn-primary">Upload Songs</a>
 								<a href="/songs" class="btn btn-warning">All Songs</a>
-						</div>
 						</div>
 						<div class="col-lg-6">
 							<div class="hr-img">
@@ -111,7 +110,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			{{-- </div> --}}
 		</div>
 	</section>
 	<!-- Hero section end -->
@@ -167,11 +166,11 @@
                 <h5 class="text-center"><a href="/songs/{{$songs->id}}">{{ $songs->author }} - {{ $songs->name }}</a></h5>
 
 				</div>
-
-
             @endforeach
-                   <h2> <a href="/songs"class="btn btn-warning mt-2 mb-3 ml-3" >All songs </a> </h2>
- @else
+
+            <h2> <a href="/songs"class="btn btn-warning mt-4 mb-3 ml-3" >All songs </a> </h2>
+
+            @else
            <h4 class="p-4 text-center text-danger" >Sorry, we don't have any song at the moment... Kindly check back later.</h4>
             @endif
 
